@@ -43,7 +43,6 @@ computeQuadratic_Sol = lambda a,b,c : np.array([  (-1*b + np.sqrt((b**2) - 4*a*c
 
 
 
-
 #prop = pd.read_table('apccf_7.4x8.25_2884cm_4019.txt',delim_whitespace=True)
 
 #prop.colums = ["J", "CT", "CP", "eta"]
@@ -55,6 +54,8 @@ prop = pd.read_csv('apccf_7.4x8.25_2884cm_4019.txt',delim_whitespace=True)
 
 
 D = 7.4 * inch__Meter # diam in meters
+
+J_from_n = lambda n : Velocity / (n * D)
 
 
 poly_coeff = np.polyfit(prop['J'],prop['CT'],2)
@@ -135,7 +136,7 @@ else:
 
     
     
-    n_star = n_candidates[0] if CP_poly(n_candidates[0]) < CP_poly(n_candidates[1]) else n_candidates[0]
+    n_star = n_candidates[0] if CP_poly(J_from_n(n_candidates[0])) < CP_poly(J_from_n(n_candidates[1])) else n_candidates[0]
 
 
 
@@ -147,7 +148,7 @@ CP_poly_coeff = np.polyfit(prop['J'],prop['CP'],2)
 
 CP_poly = np.poly1d(CP_poly_coeff)
 
-Power_star = Rho * (D **5) * (n_star ** 3) * CP_poly(n_star)
+Power_star = Rho * (D **5) * (n_star ** 3) * CP_poly(J_from_n(n_star))
 
 
 
