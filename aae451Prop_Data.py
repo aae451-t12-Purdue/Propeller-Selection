@@ -97,20 +97,57 @@ if  (B ** 2) < (4*A*C):
     
 else:
     n_candidates = computeQuadratic_Sol(A,B,C) # computes the two roots for n if a real solution exists
+    print(n_candidates)
     
     
     
 
     
-if n_candidates[0] < 0 and n_candidates[1] < 0:
+if n_candidates[0] <= 0 and n_candidates[1] <= 0:
     # also break, solutions make no physical sense, should be impossible to happen but oh well
     
     print('fail pt2')
+elif n_candidates[0] < 0 and n_candidates[1] > 0:
+    
+    #only second solutiin valid, return that one
+    
+    n_star = n_candidates[1]
+    
+    
+elif n_candidates[0] > 0 and n_candidates[1] < 0:
     
     
     
+    #only first solutiin valid, return that one
+    
+    n_star = n_candidates[0]
+
+else:
+    # Two valid solutions, must now interpolate CP and check which one is smaller
+    
+    # will utilize an order FOUR polyfit on account of the two points of inflection observed in the actual data
+    
+    CP_poly_coeff = np.polyfit(prop['J'],prop['CP'],2)
+
+    CP_poly = np.poly1d(CP_poly_coeff)
+    
+    #    n_star = n_candidates[0] if CP_poly(n_candidates[0]) * (n_candidates[0]**3) <  see notes
+
+    
+    
+    n_star = n_candidates[0] if CP_poly(n_candidates[0]) < CP_poly(n_candidates[1]) else n_candidates[0]
 
 
+
+
+
+## Actual final answer you'd get for this airfoil after running program would then need to select minimum from list of valid powers
+
+CP_poly_coeff = np.polyfit(prop['J'],prop['CP'],2)
+
+CP_poly = np.poly1d(CP_poly_coeff)
+
+Power_star = Rho * (D **5) * (n_star ** 3) * CP_poly(n_star)
 
 
 
